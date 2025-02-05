@@ -1,0 +1,43 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "YourStrongP@ssw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    restart: always
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  showcaseapi:
+    build:
+      context: .
+      dockerfile: ShowcaseAPI/Dockerfile
+    container_name: showcaseapi
+    ports:
+      - "5001:80"
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ShowcaseDB;User Id=sa;Password=YourStrongP@ssw0rd;Encrypt=False;TrustServerCertificate=True;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+
+  showcase-contactpagina:
+    build:
+      context: .
+      dockerfile: Showcase-Contactpagina/Dockerfile
+    container_name: showcase-contactpagina
+    ports:
+      - "8080:80"
+    depends_on:
+      - showcaseapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+
+volumes:
+  sql_data:
