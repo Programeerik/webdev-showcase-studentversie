@@ -26,11 +26,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
 
-  showcase-contactpagina:
+  showcasefrontend:
     build:
       context: .
-      dockerfile: Showcase-Contactpagina/Dockerfile
-    container_name: showcase-contactpagina
+      dockerfile: ShowcaseFrontend/Dockerfile
+    container_name: showcasefrontend
     ports:
       - "8080:80"
     depends_on:
