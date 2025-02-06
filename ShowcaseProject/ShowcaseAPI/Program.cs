@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
         options.AddPolicy("AllowFrontend",
             policy =>
             {
-                policy.WithOrigins("http://localhost/")
+                policy.WithOrigins("http://localhost:8080")
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
@@ -55,6 +55,8 @@ if (app.Environment.IsDevelopment())
 app.MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
