@@ -1,0 +1,41 @@
+﻿@model Contactform
+@Html.AntiForgeryToken()
+@{
+    ViewData["Title"] = "Contactpagina";
+}
+<section class="page contact">
+    <h1>Contact</h1>
+    <p>Bent u geinterreseerd in een samenwerking? Stuur via onderstaand formulier een contact verzoek!</p>
+    <span>@ViewBag.Message</span>
+    <span id="flash-message" class="hidden"></span>
+    <form method="post" class="form-contactpagina">
+        <div class="form-contactpagina__inputelement fx-col">
+            <label for="firstname">Voornaam: </label>
+            <input type="text" asp-for="FirstName" name="firstname" id="firstname" required>
+        </div>
+
+        <div class="form-contactpagina__inputelement fx-col">
+            <label for="lastname">Achternaam: </label>
+            <input type="text" asp-for="LastName" name="lastname" id="lastname" required>
+        </div>
+
+        <div class="form-contactpagina__inputelement fx-col">
+            <label for="email">E-mailadres: </label>
+            <input type="email" asp-for="Email" name="email" id="email" required>
+        </div>
+
+        <div class="form-contactpagina__inputelement fx-col">
+            <label for="phone">Telefoonnummer: </label>
+            <input type="tel" asp-for="Phone" name="phone" id="phone" required>
+        </div>
+
+        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+
+        <div class="form-contactpagina__inputelement">
+            <button type="submit" id="submit-button">Verstuur!</button>
+            <div id="loading"></div>
+        </div>
+    </form>
+</section>
+
+<script src="~/js/contact.js"></script>

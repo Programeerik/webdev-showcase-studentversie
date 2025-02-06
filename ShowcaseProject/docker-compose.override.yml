@@ -1,0 +1,12 @@
+version: '3.4'
+services:
+  showcaseapi:
+    volumes:
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+    command: ["dotnet", "watch", "run", "--no-launch-profile", "--urls", "http://+:80"]
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  showcasefrontend:
+    command: ["dotnet", "watch", "run", "--no-launch-profile", "--urls", "http://+:80"]
