@@ -28,8 +28,6 @@ namespace ShowcaseAPI.Controllers
 
             try
             {
-
-                // Mail versturen
                 SmtpClient client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
                 {
                     Credentials = new NetworkCredential("0226739d356de2", "8bea34b49c08d3"),
@@ -41,7 +39,6 @@ namespace ShowcaseAPI.Controllers
 
                 client.Send(form.Email, "s1157193@student.windesheim.nl", "Nieuw contactverzoek", messageBody);
 
-                // Geen persoonsgegevens opslaan
                 form = null;
 
                 ViewBag.Message = "Uw bericht is succesvol verzonden!";

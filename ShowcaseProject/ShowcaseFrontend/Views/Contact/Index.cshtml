@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Contactpagina";
 }
-<section class="page contact">
+<section class="contact">
     <h1>Contact</h1>
     <p>Bent u geinterreseerd in een samenwerking? Stuur via onderstaand formulier een contact verzoek!</p>
     <span>@ViewBag.Message</span>
@@ -28,7 +28,7 @@
             <label for="phone">Telefoonnummer: </label>
             <input type="tel" asp-for="Phone" name="phone" id="phone" required>
         </div>
-
+        
         <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
 
         <div class="form-contactpagina__inputelement">

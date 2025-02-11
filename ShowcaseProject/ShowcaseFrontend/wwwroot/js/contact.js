@@ -53,6 +53,7 @@ form.addEventListener('submit', function (event) {
     .finally(() => {
         hideLoading();
         submitButton.disabled = false;
+        flashMessage.textContent = "Het formulier is succesvol verzonden! Hartelijk bedankt!"
     });
 });
 
