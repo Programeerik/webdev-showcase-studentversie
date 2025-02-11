@@ -1,9 +1,10 @@
-services:
+﻿services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: sqlserver
+    env_file:
+    - .env
     environment:
-      SA_PASSWORD: "YourStrongP@ssw0rd"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
     ports:
@@ -21,10 +22,8 @@ services:
       - "5001:80"
     depends_on:
       - sqlserver
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ShowcaseDB;User Id=sa;Password=YourStrongP@ssw0rd;Encrypt=False;TrustServerCertificate=True;
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
+    env_file:
+      - .env
 
   showcasefrontend:
     build:
