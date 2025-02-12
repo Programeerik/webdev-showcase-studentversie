@@ -1,4 +1,7 @@
 ﻿/*mobile version*/
+:root {
+    --main-colour: rgba(39, 140, 39, 0.96);
+}
 
 .page {
     display: flex;
@@ -27,13 +30,13 @@
     animation: glow 3s ease alternate;
 }
 
-.profile-content {
+.profile-content, .skills-content {
     padding: 15px;
     font-size: 20px;
 }
 
-.profile-content__category-title {
-    color: rgba(39, 140, 39, 0.96);
+.profile-content__category-title, .skills-content__category-title {
+    color: var(--main-colour);
 }
 
 .profile-content__category--hidden-mobile {
@@ -63,7 +66,7 @@
 }
 
 .profile-content__institute {
-    color: rgba(39, 140, 39, 0.96);
+    color: var(--main-colour);
     margin-top: 0px;
     font-size: 14px;
 }
