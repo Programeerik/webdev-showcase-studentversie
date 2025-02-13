@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Contactpagina";
+}
+
+<div class="container">
+
+    <div class="content-gdpr-not-chosen hide">
+        <p>In verband met de privacy bescherming van de ontwikkelaar kan deze content alleen getoond worden wanneer de cookies geaccepteerd zijn.</p>
+    </div>
+
+    <div class="content-gdpr-reject hide">
+        <p>Helaas kan u deze content niet bezichtigen, in verband met de privacy van de ontwikkelaar.</p>
+        <p>Wilt u toch de content zien en de cookies accepteren dan kan dat:</p>
+        <button class="gdpr-consent__button--show-gdpr">Toon Cookiebanner</button>
+    </div>
+
+    <section class="gdpr-consent hide">
+
+        <div class="gdpr-consent__description">
+            <p>
+                Deze website gebruikt cookies.
+                We gebruiken cookies om content te personaliseren, voor social media en het analyseren
+                van verkeer op de website, advertenties.
+            </p>
+        </div>
+
+        <div class="gdpr-consent__choice">
+            <button class="gdpr-consent__button--accept">Accepteren</button>
+            <button class="gdpr-consent__button--reject">Afwijzen</button>
+        </div>
+
+    </section>
+</div>
