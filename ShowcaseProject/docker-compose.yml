@@ -1,4 +1,4 @@
-﻿services:
+services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: sqlserver
@@ -29,7 +29,7 @@
     build:
       context: .
       dockerfile: ShowcaseFrontend/Dockerfile
-      target: dev  # Use the dev stage for hot reload
+      target: dev
     container_name: showcasefrontend
     ports:
       - "8080:80"
@@ -39,8 +39,8 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
     volumes:
-      - ./ShowcaseFrontend:/app/ShowcaseFrontend  # Mounts frontend correctly
-      - ~/.nuget/packages:/root/.nuget/packages:ro  # Cache NuGet packages
+      - ./ShowcaseFrontend:/app/ShowcaseFrontend
+      - ~/.nuget/packages:/root/.nuget/packages:ro
     command: ["dotnet", "watch", "run", "--project", "/app/ShowcaseFrontend/ShowcaseFrontend.csproj", "--no-launch-profile", "--urls=http://0.0.0.0:80"]
 
 volumes:
