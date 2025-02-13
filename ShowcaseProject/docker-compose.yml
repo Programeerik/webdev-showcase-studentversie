@@ -1,9 +1,9 @@
-﻿services:
+services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: sqlserver
     env_file:
-    - .env
+      - .env
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
@@ -29,6 +29,7 @@
     build:
       context: .
       dockerfile: ShowcaseFrontend/Dockerfile
+      target: dev
     container_name: showcasefrontend
     ports:
       - "8080:80"
@@ -37,6 +38,10 @@
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./ShowcaseFrontend:/app/ShowcaseFrontend
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+    command: ["dotnet", "watch", "run", "--project", "/app/ShowcaseFrontend/ShowcaseFrontend.csproj", "--no-launch-profile", "--urls=http://0.0.0.0:80"]
 
 volumes:
   sql_data:

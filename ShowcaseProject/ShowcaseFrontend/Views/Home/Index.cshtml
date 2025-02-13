@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="page">
+<div class="page content-gdpr-accept hide">
     <section class="personalia" style="padding:0.75rem;">
         <img class="person-logo" src="images/ErikL.jpg">
         <h1 class="person-name">Erik Leusink</h1>
@@ -62,3 +62,5 @@
         </section>
     </section>
 </div>
+
+@await Html.PartialAsync("Gdpr")
