@@ -27,23 +27,23 @@ namespace Showcase_Contactpagina.Controllers
         }
 
         // POST: ContactController
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(Contactform form)
-        {
-            if(!ModelState.IsValid)
-            {
-                ViewBag.Message = "De ingevulde velden voldoen niet aan de gestelde voorwaarden";
-                return View();
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Index(Contactform form)
+        //{
+        //    if(!ModelState.IsValid)
+        //    {
+        //        ViewBag.Message = "De ingevulde velden voldoen niet aan de gestelde voorwaarden";
+        //        return View();
+        //    }
 
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
+        //    var settings = new JsonSerializerSettings
+        //    {
+        //        ContractResolver = new CamelCasePropertyNamesContractResolver()
+        //    };
 
-            var json = JsonConvert.SerializeObject(form, settings);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+        //    var json = JsonConvert.SerializeObject(form, settings);
+        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
 
            
 
@@ -54,18 +54,18 @@ namespace Showcase_Contactpagina.Controllers
             //Hint: vergeet niet om de mailfunctionaliteit werkend te maken in ShowcaseAPI > Controllers > MailController.cs,
             //      nadat je een account hebt aangemaakt op Mailtrap (of een alternatief).
 
-            HttpResponseMessage response = await _httpClient.PostAsync("api/Mail", content);
+        //    HttpResponseMessage response = await _httpClient.PostAsync("api/Mail", content);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                ViewBag.Message = "Er is iets misgegaan";
-                return View();
-            } else
-            {
-                ViewBag.Message = "Het contactformulier is verstuurd";
-            }
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        ViewBag.Message = "Er is iets misgegaan";
+        //        return View();
+        //    } else
+        //    {
+        //        ViewBag.Message = "Het contactformulier is verstuurd";
+        //    }
 
-            return View();
-        }
+        //    return View();
+        //}
     }
 }

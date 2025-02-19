@@ -11,7 +11,6 @@ builder.Services.AddHttpClient("NoSSL", client =>
 {
     var handler = new HttpClientHandler();
 
-    // Alleen SSL-verificatie uitschakelen in development
     if (builder.Environment.IsDevelopment())
     {
         handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
@@ -21,7 +20,6 @@ builder.Services.AddHttpClient("NoSSL", client =>
 });
 
 builder.Services.AddSession();
-
 
 var app = builder.Build();
 
@@ -33,14 +31,18 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
 app.UseSession();
+
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
