@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Showcase_Contactpagina</RootNamespace>
+    <RootNamespace>ShowcaseFrontend</RootNamespace>
     <UserSecretsId>3d108fbe-0735-44f6-9f37-5b8f0ecd5ac0</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>

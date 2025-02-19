@@ -1,69 +1,81 @@
-﻿const inputFirstname = document.querySelector('#firstname');
-const inputLastname = document.querySelector('#lastname');
-const inputPhone = document.querySelector('#phone');
-const inputEmail = document.querySelector('#email');
-const form = document.querySelector('.form-contactpagina');
-const flashMessage = document.querySelector('#flash-message');
-const submitButton = document.querySelector('#submit-button');
-const loader = document.querySelector("#loading");
+﻿document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector('.form-contactpagina');
+    const flashMessage = document.querySelector('#flash-message');
+    const submitButton = document.querySelector('#submit-button');
+    const loader = document.querySelector("#loading");
 
-const validateField = (input, regex, errorMsg) => {
-    if (!regex.test(input.value.trim())) {
-        input.setCustomValidity(errorMsg);
-        input.reportValidity();
-    } else {
-        input.setCustomValidity("");
-    }
-};
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-inputEmail.addEventListener("input", () => validateField(inputEmail, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, "Ongeldig e-mailadres."));
-inputPhone.addEventListener("input", () => validateField(inputPhone, /^\+?[0-9\s-]{10,20}$/, "Ongeldig telefoonnummer."));
+        if (!form.checkValidity()) return;
 
-form.addEventListener('submit', function (event) {
-    event.preventDefault();
+        displayLoading();
+        submitButton.disabled = true;
+        clearErrors();
 
-    if (!form.checkValidity()) return;
+        const formData = {
+            FirstName: form.firstname.value,
+            LastName: form.lastname.value,
+            Email: form.email.value,
+            Phone: form.phone.value,
+            Subject: form.subject.value,
+            Message: form.message.value,
+            RecaptchaResponse: recaptchaToken
+        };
 
-    displayLoading();
-    submitButton.disabled = true;
+        try {
+            const response = await fetch('http://localhost:5001/api/mail', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
 
-    const formData = {
-        firstname: inputFirstname.value,
-        lastname: inputLastname.value,
-        email: inputEmail.value,
-        phone: inputPhone.value,
-        __RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]').value
-    };
+            const data = await response.json();
 
-    fetch('http://localhost:5001/api/Mail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        flashMessage.textContent = data.errors ? data.errors.join(" ") : data.message;
-        flashMessage.classList.add(data.errors ? "error" : "success");
-        if (!data.errors) form.reset();
-    })
-    .catch(() => {
-        flashMessage.textContent = "Er is een fout opgetreden bij het verzenden.";
-        flashMessage.classList.add("error");
-    })
-    .finally(() => {
-        hideLoading();
-        submitButton.disabled = false;
-        flashMessage.textContent = "Het formulier is succesvol verzonden! Hartelijk bedankt!"
+            if (!response.ok) {
+                displayErrors(data.errors || {});
+                flashMessage.textContent = data.message || "Er is een fout opgetreden.";
+                flashMessage.classList.add("error");
+            } else {
+                flashMessage.textContent = "Het formulier is succesvol verzonden! Hartelijk bedankt!";
+                flashMessage.classList.add("success");
+                form.reset();
+                grecaptcha.reset();
+            }
+        } catch (error) {
+            flashMessage.textContent = "Er is een fout opgetreden bij het verzenden.";
+            flashMessage.classList.add("error");
+        } finally {
+            hideLoading();
+            submitButton.disabled = false;
+        }
     });
-});
 
-function displayLoading() {
-    loader.classList.add("display");
-    setTimeout(() => {
+    function displayErrors(errors) {
+        Object.keys(errors).forEach(field => {
+            const inputField = form.querySelector(`[name=${field.toLowerCase()}]`);
+            if (inputField) {
+                const errorElement = document.createElement("span");
+                errorElement.classList.add("text-danger");
+                errorElement.id = `error-${field}`;
+                errorElement.textContent = errors[field].join(", ");
+
+                inputField.parentElement.appendChild(errorElement);
+            }
+        });
+    }
+
+    function clearErrors() {
+        document.querySelectorAll(".text-danger").forEach(el => el.remove());
+        flashMessage.textContent = "";
+        flashMessage.classList.remove("error", "success");
+    }
+
+    function displayLoading() {
+        loader.classList.add("display");
+    }
+
+    function hideLoading() {
         loader.classList.remove("display");
-    }, 5000);
-}
-
-function hideLoading() {
-    loader.classList.remove("display");
-}
+    }
+});

@@ -1,54 +1,111 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using ShowcaseAPI.Models;
 using System.Net;
 using System.Net.Mail;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 namespace ShowcaseAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class MailController : Controller
     {
-        // POST api/<MailController>
-        [HttpPost]
-        public ActionResult Post([FromBody] Contactform form)
+        private readonly ILogger<MailController> _logger;
+        private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
+
+        public MailController(ILogger<MailController> logger, IConfiguration configuration)
         {
-            //Op brightspace staan instructies over hoe je de mailfunctionaliteit werkend kunt maken:
-            //Project Web Development > De showcase > Week 2: contactpagina (UC2) > Hoe verstuur je een mail vanuit je webapplicatie met Mailtrap?
+            _logger = logger;
+            _configuration = configuration;
+            _httpClient = new HttpClient();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Contactform form)
+        {
 
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return BadRequest(new { errors });
+                var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+
+                return BadRequest(new
+                {
+                    message = "Validatiefout: controleer uw invoer.",
+                    errors
+                });
+            }
+
+            var recaptchaSecret = _configuration["ReCaptchaSettings:SecretKey"];
+            if (string.IsNullOrEmpty(form.RecaptchaResponse))
+            {
+                return BadRequest(new { message = "ReCAPTCHA verificatie ontbreekt." });
+            }
+
+            var googleResponse = await _httpClient.PostAsync($"https://www.google.com/recaptcha/api/siteverify?secret={recaptchaSecret}&response={form.RecaptchaResponse}",
+                null
+            );
+
+            var jsonResponse = await googleResponse.Content.ReadAsStringAsync();
+            var captchaResult = JsonSerializer.Deserialize<RecaptchaVerificationResponse>(jsonResponse);
+
+            if (!captchaResult.Success || captchaResult.Score < 0.5) 
+            {
+                return BadRequest(new { message = "ReCAPTCHA verificatie mislukt." });
             }
 
             try
             {
-                SmtpClient client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
+                using (SmtpClient client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525))
                 {
-                    Credentials = new NetworkCredential("0226739d356de2", "8bea34b49c08d3"),
-                    EnableSsl = true
-                };
+                    client.Credentials = new NetworkCredential("0226739d356de2", "8bea34b49c08d3");
+                    client.EnableSsl = true;
 
-                string messageBody = $"Nieuw contactverzoek van {form.FirstName} {form.LastName}.\n\n" +
-                                     $"Email: {form.Email}\nTelefoonnummer: {form.Phone}";
+                    string messageBody = $"Nieuw contactverzoek van {form.FirstName} {form.LastName}.\n\n" +
+                                         $"Email: {form.Email}\nTelefoonnummer: {form.Phone}\n\n" +
+                                         $"Bericht:\n{form.Message}";
 
-                client.Send(form.Email, "s1157193@student.windesheim.nl", "Nieuw contactverzoek", messageBody);
+                    MailMessage mailMessage = new MailMessage
+                    {
+                        From = new MailAddress(form.Email),
+                        Subject = "Nieuw contactverzoek",
+                        Body = messageBody,
+                        IsBodyHtml = false
+                    };
+                    mailMessage.To.Add("s1157193@student.windesheim.nl");
 
-                form = null;
+                    client.Send(mailMessage);
+                }
 
-                ViewBag.Message = "Uw bericht is succesvol verzonden!";
-                return Ok(new { message = ViewBag.Message });
+                return Ok(new { message = "Uw bericht is succesvol verzonden!" });
+            }
+            catch (SmtpException smtpEx)
+            {
+                _logger.LogError(smtpEx, "SMTP fout tijdens het verzenden van de e-mail.");
+                return StatusCode(500, new
+                {
+                    error = "Er is een fout opgetreden bij het verzenden van uw bericht.",
+                    details = smtpEx.Message
+                });
             }
             catch (Exception ex)
             {
-                ViewBag.Message = "Er is een fout opgetreden bij het verzenden van uw bericht.";
-                return StatusCode(500, new { error = ViewBag.Message, details = ex.Message });
+                _logger.LogError(ex, "Algemene fout bij e-mail verzenden.");
+                return StatusCode(500, new
+                {
+                    error = "Er is een onverwachte fout opgetreden.",
+                    details = ex.Message
+                });
             }
         }
     }
+    public class RecaptchaVerificationResponse
+    {
+        public bool Success { get; set; }
+        public float Score { get; set; }
+    }
+
 }

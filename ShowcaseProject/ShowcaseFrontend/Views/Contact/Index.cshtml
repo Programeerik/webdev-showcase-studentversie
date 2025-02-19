@@ -1,10 +1,18 @@
 ﻿@model Contactform
-@Html.AntiForgeryToken()
+@inject IConfiguration configuration
 @{
     ViewData["Title"] = "Contactpagina";
+    var siteKey = configuration["ReCaptchaSettings:SiteKey"];
 }
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function onSubmit(token) {
+        document.querySelector(".form-contactpagina").submit();
+    }
+</script>
+
 <section class="contact">
-    <h1>Contact</h1>
+    <h1>Contact met Erik Leusink</h1>
     <p>Bent u geinterreseerd in een samenwerking? Stuur via onderstaand formulier een contact verzoek!</p>
     <span>@ViewBag.Message</span>
     <span id="flash-message" class="hidden"></span>
@@ -29,10 +37,20 @@
             <input type="tel" asp-for="Phone" name="phone" id="phone" required>
         </div>
         
-        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+        <div class="form-contactpagina__inputelement fx-col">
+            <label for="subject">Onderwerp:</label>
+            <input type="text" asp-for="Subject" name="subject" id="subject" required />
+        </div>
+
+        <div class="form-contactpagina__inputelement fx-col">
+            <label for="message">Bericht:</label>
+            <textarea type="text" asp-for="Message" name="message" id="message" required ></textarea>
+        </div>
 
         <div class="form-contactpagina__inputelement">
-            <button type="submit" id="submit-button">Verstuur!</button>
+            <button class="g-recaptcha" data-sitekey="@siteKey" data-callback='onSubmit' data-action='submit' type="submit" id="submit-button">
+                Verstuur!
+            </button>
             <div id="loading"></div>
         </div>
     </form>
