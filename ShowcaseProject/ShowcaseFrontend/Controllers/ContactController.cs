@@ -5,8 +5,6 @@ using System.Net;
 using Showcase_Contactpagina.Models;
 using System.Numerics;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System.Net.Http;
 
 namespace Showcase_Contactpagina.Controllers

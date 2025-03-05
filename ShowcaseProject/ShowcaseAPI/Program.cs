@@ -10,6 +10,10 @@ using ShowcaseAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.DataProtection;
 using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.SignalR;
+using ShowcaseAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,15 +24,50 @@ var builder = WebApplication.CreateBuilder(args);
             {
                 policy.WithOrigins("http://localhost:8080")
                       .AllowAnyHeader()
-                      .AllowAnyMethod();
+                      .AllowAnyMethod()
+                      .AllowCredentials();
             });
     });
 
 Env.Load();
 
 // Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!)),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+    };
+
+
+    //options.Events = new JwtBearerEvents
+    //{
+    //    OnMessageReceived = context =>
+    //    {
+    //        var accessToken = context.Request.Query["Access_token"];
+
+    //        var path = context.Request.Path;
+    //        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("hubs/")))
+    //        {
+    //            context.Token = accessToken;
+    //        }
+
+    //        return Task.CompletedTask;
+    //    }
+    //};
+});
+
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 
@@ -61,8 +100,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 
+app.MapHub<GameHub>("/hub/game");
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
