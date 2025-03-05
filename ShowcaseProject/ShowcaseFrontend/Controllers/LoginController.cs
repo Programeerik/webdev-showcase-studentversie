@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace Showcase_Contactpagina.Controllers
 {
@@ -22,7 +25,7 @@ namespace Showcase_Contactpagina.Controllers
         public async Task<IActionResult> Index(string email, string password)
         {
             var loginData = new { email, password };
-            var content = new StringContent(JsonConvert.SerializeObject(loginData), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync("/login", content);
 
@@ -32,6 +35,17 @@ namespace Showcase_Contactpagina.Controllers
 
                 HttpContext.Session.SetString("AuthToken", result);
                 HttpContext.Session.SetString("UserEmail", email);
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, email),
+                    new Claim("AuthToken", result)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties();
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                 return RedirectToAction("Index", "Home");
             }

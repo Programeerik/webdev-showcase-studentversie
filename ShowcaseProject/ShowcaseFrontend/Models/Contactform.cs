@@ -33,7 +33,7 @@ namespace Showcase_Contactpagina.Models
         [AllowSpecificHtml("b", "strong", "i", "u", "ul", "ol", "li", "h1", "h2", "h3", "p", "br")]
         public required string Message { get; set; }
 
-        public string RecaptchaResponse { get; set; }
+        public required string RecaptchaResponse { get; set; }
     }
 }
 

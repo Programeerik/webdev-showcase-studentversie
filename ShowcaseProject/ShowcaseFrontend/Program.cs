@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,7 +21,15 @@ builder.Services.AddHttpClient("NoSSL", client =>
     return handler;
 });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Index";
+    });
+
+
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -41,7 +51,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
