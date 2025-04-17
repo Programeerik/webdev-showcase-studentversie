@@ -67,13 +67,20 @@ namespace ShowcaseAPI.Hubs
             if (playerSymbol.Equals('X') && ((_turnCounter % 2) == 0))
             {
                 await Clients.Group(name).UpdateBoard(playerSymbol, position);
-                _board[position] = playerSymbol;
-                _turnCounter++;
-            }else if(playerSymbol.Equals('O') && ((_turnCounter % 2) == 1))
+                if (_board[position].Equals(' '))
+                {
+                    _board[position] = playerSymbol;
+                    _turnCounter++;
+                }
+            }
+            else if(playerSymbol.Equals('O') && ((_turnCounter % 2) == 1))
             {
                 await Clients.Group(name).UpdateBoard(playerSymbol, position);
-                _board[position] = playerSymbol;
-                _turnCounter++;
+                if (_board[position].Equals(' '))
+                {
+                    _board[position] = playerSymbol;
+                    _turnCounter++;
+                }
             }
             else
             {
@@ -89,7 +96,12 @@ namespace ShowcaseAPI.Hubs
             {
                 await Clients.Group(name).GameWon(playerSymbol);
             }
-            else if(checkVertical(playerSymbol)){
+            else if (checkVertical(playerSymbol))
+            {
+                await Clients.Group(name).GameWon(playerSymbol);
+            }
+            else if (checkDiagonal(playerSymbol))
+            {
                 await Clients.Group(name).GameWon(playerSymbol);
             }
         }
@@ -106,6 +118,15 @@ namespace ShowcaseAPI.Hubs
         private bool checkVertical(char playerSymbol)
         {
             if ((_board[0] == playerSymbol && _board[3] == playerSymbol && _board[6] == playerSymbol) || (_board[1] == playerSymbol && _board[4] == playerSymbol && _board[7] == playerSymbol || (_board[2] == playerSymbol && _board[5] == playerSymbol && _board[8] == playerSymbol)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool checkDiagonal(char playerSymbol)
+        {
+            if ((_board[0] == playerSymbol && _board[4] == playerSymbol && _board[8] == playerSymbol) || (_board[2] == playerSymbol && _board[4] == playerSymbol && _board[6] == playerSymbol))
             {
                 return true;
             }

@@ -9,7 +9,6 @@ services:
       MSSQL_PID: "Developer"
     ports:
       - "1433:1433"
-    restart: always
     volumes:
       - sql_data:/var/opt/mssql
 

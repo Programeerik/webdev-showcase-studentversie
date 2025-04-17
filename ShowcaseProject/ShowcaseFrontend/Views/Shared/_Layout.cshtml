@@ -41,6 +41,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Login" asp-action="Logout">Uitloggen</a>
                             </li>
+                            @if(User.IsInRole("Admin")) {
+                                <li class="nav-item">
+                                    <a class="nav-link">Gebruiker Beheer</a>
+                                </li>
+                            }
                         }
                         else
                         {

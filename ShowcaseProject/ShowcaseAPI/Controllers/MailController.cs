@@ -39,6 +39,8 @@ namespace ShowcaseAPI.Controllers
                 });
             }
 
+
+
             var recaptchaSecret = _configuration["ReCaptchaSettings:SecretKey"];
             if (string.IsNullOrEmpty(form.RecaptchaResponse))
             {

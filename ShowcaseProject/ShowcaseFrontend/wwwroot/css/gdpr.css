@@ -56,3 +56,6 @@
     display: block!important;
 }
 
+.show-gdpr {
+    display: flex!important;
+}
