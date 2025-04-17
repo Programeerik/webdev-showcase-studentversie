@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+//using System.IdentityModel.Tokens.Jwt;
+
 
 namespace Showcase_Contactpagina.Controllers
 {
@@ -41,6 +43,7 @@ namespace Showcase_Contactpagina.Controllers
                     new Claim(ClaimTypes.Name, email),
                     new Claim("AuthToken", result)
                 };
+
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties();

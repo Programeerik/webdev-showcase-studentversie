@@ -139,8 +139,13 @@
             span.style = "border:solid;#333333;1px;width:50px;height:50px;";
             span.id = "cell" + i;
             span.onclick = async () => {
-                await connection.invoke("SendMove", groupName ,playerSymbol, i);
+                let cell = document.getElementById("cell" + i);
+                if (cell.innerHTML == ' ') {
+                    await connection.invoke("SendMove", groupName, playerSymbol, i);
+                }
             };
+
+
             board.appendChild(span);
         }
     }

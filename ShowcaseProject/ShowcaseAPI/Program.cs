@@ -1,33 +1,25 @@
-using Microsoft.AspNetCore.Authentication;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
-using ShowcaseAPI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using DotNetEnv;
-using Microsoft.AspNetCore.Antiforgery;
-using ShowcaseAPI.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.DataProtection;
-using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.SignalR;
+using ShowcaseAPI.Data;
 using ShowcaseAPI.Hubs;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("AllowFrontend",
-            policy =>
-            {
-                policy.WithOrigins("http://localhost:8080")
-                      .AllowAnyHeader()
-                      .AllowAnyMethod()
-                      .AllowCredentials();
-            });
-    });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:8080")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
 
 Env.Load();
 
@@ -48,23 +40,6 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
     };
-
-
-    //options.Events = new JwtBearerEvents
-    //{
-    //    OnMessageReceived = context =>
-    //    {
-    //        var accessToken = context.Request.Query["Access_token"];
-
-    //        var path = context.Request.Path;
-    //        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("hubs/")))
-    //        {
-    //            context.Token = accessToken;
-    //        }
-
-    //        return Task.CompletedTask;
-    //    }
-    //};
 });
 
 builder.Services.AddSignalR();
@@ -81,6 +56,7 @@ options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_URL")));
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<DataContext>();
 
 var app = builder.Build();
@@ -123,4 +99,17 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { "Admin", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
 app.Run();
