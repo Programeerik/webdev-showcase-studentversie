@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Build API
 
 on:
   push:
@@ -10,5 +10,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build the Docker image
+      - name: Build the API Docker image
         run: docker build ShowcaseProject --file ShowcaseProject/ShowcaseAPI/Dockerfile --tag my-image-name:$(date +%s)
