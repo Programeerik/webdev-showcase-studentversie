@@ -27,7 +27,7 @@
             _mockClients.Setup(clients => clients.Caller).Returns(_mockClientProxy.Object);
 
 
-            var groupName = "123456";
+            var groupName = "123456"; 
             var connectionId = "test-connection";
             _mockContext.Setup(c => c.ConnectionId).Returns(connectionId);
 

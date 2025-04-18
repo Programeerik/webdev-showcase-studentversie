@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
                   .AllowCredentials();
         });
 });
-
+ 
 Env.Load();
 
 // Add services to the container.
