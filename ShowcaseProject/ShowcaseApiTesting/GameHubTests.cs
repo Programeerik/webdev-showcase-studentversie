@@ -1,11 +1,9 @@
 ﻿namespace ShowcaseApiTesting
 {
-    using Xunit;
     using Moq;
     using ShowcaseAPI.Hubs;
     using Microsoft.AspNetCore.SignalR;
     using System.Threading.Tasks;
-    using System.Collections.Generic;
 
     [TestFixture]
     public class GameHubTests

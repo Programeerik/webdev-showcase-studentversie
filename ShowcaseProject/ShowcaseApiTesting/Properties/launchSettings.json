@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ShowcaseApiTesting": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
