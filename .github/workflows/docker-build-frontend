@@ -1,0 +1,14 @@
+name: Docker Build Frontend
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the Frontend Docker image
+        run: docker build ShowcaseProject --file ShowcaseProject/ShowcaseFrontend/Dockerfile --tag my-image-name:$(date +%s)
