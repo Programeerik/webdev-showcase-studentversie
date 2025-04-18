@@ -7,7 +7,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient("NoSSL", client =>
 {
-    client.BaseAddress = new Uri("http://showcaseapi");
+    client.BaseAddress = new Uri("http://showcaseapi" );
 })
 .ConfigurePrimaryHttpMessageHandler(() =>
 {

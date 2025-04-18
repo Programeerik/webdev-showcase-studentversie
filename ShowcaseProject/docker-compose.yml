@@ -12,18 +12,6 @@ services:
     volumes:
       - sql_data:/var/opt/mssql
 
-  showcaseapi:
-    build:
-      context: .
-      dockerfile: ShowcaseAPI/Dockerfile
-    container_name: showcaseapi
-    ports:
-      - "5001:80"
-    depends_on:
-      - sqlserver
-    env_file:
-      - .env
-
   showcasefrontend:
     build:
       context: .
@@ -40,6 +28,31 @@ services:
       - ./ShowcaseFrontend:/app/ShowcaseFrontend
       - ~/.nuget/packages:/root/.nuget/packages:ro
     command: ["dotnet", "watch", "run", "--project", "/app/ShowcaseFrontend/ShowcaseFrontend.csproj", "--no-launch-profile", "--urls=http://0.0.0.0:80"]
+  
+  showcaseapi:
+    build:
+      context: .
+      dockerfile: ShowcaseAPI/Dockerfile
+    container_name: showcaseapi
+    ports:
+      - "5001:80"
+    depends_on:
+      - sqlserver
+    env_file:
+      - .env
+    environment:
+      - SQLSERVER_HOST=sqlserver
+      - SQLSERVER_PORT=1433
+
+  showcaseapitesting:
+    build:
+      context: .
+      dockerfile: ShowcaseApiTesting/Dockerfile
+    container_name: showcaseapitesting
+    depends_on:
+      - showcaseapi
+    volumes:
+      - ./ShowcaseApiTesting/TestResults:/src/ShowcaseApiTesting/TestResults
 
 volumes:
   sql_data:
