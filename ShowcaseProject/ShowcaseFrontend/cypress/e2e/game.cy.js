@@ -13,7 +13,7 @@ describe('Game Pagina (ingelogd) | Toont game pagina', () => {
         cy.visit('http://localhost:8080/login')
 
         cy.get('#username').type('test@gmail.com')
-        cy.get('input[type="password"]').type('P@ssw0rd');
+        cy.get('input[type="password"]').type('P@ssw0rd!1234');
 
         cy.get('button[type="submit"]').click();
 

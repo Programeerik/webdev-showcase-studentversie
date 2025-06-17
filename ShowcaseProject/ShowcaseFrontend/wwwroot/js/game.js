@@ -46,7 +46,7 @@
 
     await connection.on("GroupFull", (groupName) => {
         alert(groupName + " heeft al het maximum van twee spelers.")
-    })
+    });
 
     await connection.on("GroupMade", (groupName, userIds) => {
         var groupNameElement = document.querySelector("#GroupName");
@@ -95,6 +95,7 @@
             console.error(err);
         }
     });
+
     function generateGroupName() {
 
         let randomString = (Math.random() + 1).toString(36).substring(7);
@@ -134,58 +135,14 @@
         const board = document.querySelector("#GameBoard");
         board.setAttribute("style", "display:grid;width: 150px;grid-template-columns: auto auto auto;gap: 5px 5px;");
         for (let i = 0; i < 9; i++) {
-            let span = document.createElement("div");
-            span.innerHTML = " ";
-            span.style = "border:solid;#333333;1px;width:50px;height:50px;";
-            span.id = "cell" + i;
-            span.onclick = async () => {
-                let cell = document.getElementById("cell" + i);
-                if (cell.innerHTML == ' ') {
-                    await connection.invoke("SendMove", groupName, playerSymbol, i);
-                }
-            };
+            const boardCell = document.createElement("board-cell");
+            boardCell.setAttribute("index", i);
+            boardCell.setAttribute("group-name", groupName);
+            boardCell.setAttribute("player-symbol", playerSymbol);
 
-
-            board.appendChild(span);
+            boardCell.connection = connection;
+            board.appendChild(boardCell);
         }
-    }
-
-    connection.on("UpdateBoard", (playerSymbol, position) => {
-
-        let cell = document.querySelector("#cell" + position);
-        cell.innerHTML = playerSymbol;
-    });
-
-    connection.on("GameWon", (playerSymbol) => {
-        for (let i = 0; i < 9; i++) {
-            let span = document.getElementById("cell" + i);
-            span.onclick = null;
-        }
-
-        const message = "<h1>" + playerSymbol + " heeft gewonnen!" + "</h1>";
-
-        showGameEndPopUp(message);
-    });
-
-    function showGameEndPopUp(message) {
-        const popup = document.createElement("div");
-        popup.id = "GameEndPopUp";
-        popup.innerHTML = message;
-        popup.style = "z-index: 10;width: 50%;position: absolute;top: 20%;left: 25%;background: #333333;opacity: 0.7;color: white;text-align: center;padding: 1rem;"
-
-        const button = document.createElement("button");
-        button.onclick = () => {
-            connection.stop();
-            hideGameEndPopUp();
-            location.href = location.href;
-        };
-        button.innerHTML = "Terug naar beginscherm.";
-        popup.appendChild(button);
-        document.querySelector("body").appendChild(popup);
-    }
-
-    function hideGameEndPopUp() {
-        document.querySelector("#GameEndPopUp").remove();
     }
 
     async function setupConnection() {
@@ -212,5 +169,3 @@
         return connection;
     }
 });
-
-
