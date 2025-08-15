@@ -21,9 +21,9 @@ CMD ["dotnet", "watch", "run", "--project", "/app/ShowcaseFrontend/ShowcaseFront
 # Build stage for production
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ShowcaseFrontend/ShowcaseFrontend.csproj ShowcaseFrontend/
+COPY ShowcaseProject/ShowcaseFrontend/ShowcaseFrontend.csproj ShowcaseFrontend/
 RUN dotnet restore "./ShowcaseFrontend/ShowcaseFrontend.csproj"
-COPY . . 
+COPY ShowcaseProject/ShowcaseFrontend/. ShowcaseFrontend/
 WORKDIR "/src/ShowcaseFrontend"
 RUN dotnet build "./ShowcaseFrontend.csproj" -c Release -o /app/build
 
