@@ -7,8 +7,8 @@ CMD ["dotnet", "watch", "run", "--no-launch-profile", "--urls", "http://+:80"]
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ShowcaseFrontend/ShowcaseFrontend.csproj ShowcaseFrontend/
-RUN dotnet restore ./ShowcaseFrontend/ShowcaseFrontend.csproj
+COPY ShowcaseProject/ShowcaseFrontend/ShowcaseFrontend.csproj ./
+RUN dotnet restore
 COPY ShowcaseFrontend/. ShowcaseFrontend/
 WORKDIR /src/ShowcaseFrontend
 RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
