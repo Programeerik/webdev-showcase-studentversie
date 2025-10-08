@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: ShowcaseFrontend/Dockerfile
-      target: "dev"
+      target: "build"
     container_name: showcasefrontend
     ports:
       - "8080:80"
