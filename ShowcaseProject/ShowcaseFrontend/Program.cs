@@ -40,7 +40,21 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Content-Security-Policy",
+        "default-src 'self'; " +
+        "script-src 'self' https://cdnjs.cloudflare.com ; " +
+        "style-src 'self' 'sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ='; " +
+        "font-src 'self' ; " +
+        "img-src 'self'; " +
+        "object-src 'none'; " +
+        "frame-ancestors 'none'; " +
+        "base-uri 'self'; " +
+        "form-action 'self';"+
+        "connect-src 'self'  ws://localhost:* http://localhost:5001 https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js.map; ");
+    await next();
+});
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();

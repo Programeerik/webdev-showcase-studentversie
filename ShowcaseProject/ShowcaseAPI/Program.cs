@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
+    options.AddPolicy("AllowFrontendDevelopment",
         policy =>
         {
             policy.WithOrigins("http://localhost:8080")
@@ -20,7 +20,19 @@ builder.Services.AddCors(options =>
                   .AllowCredentials();
         });
 });
- 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontendProduction",
+        policy =>
+        {
+            policy.WithOrigins("https://showcaseapi-demo123.eastus.azurecontainer.io")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 Env.Load();
 
 // Add services to the container.
@@ -73,8 +85,14 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("AllowFrontendDevelopment");
+}else
+{
+    app.UseCors("AllowFrontendProduction");
 
-app.UseCors("AllowFrontend");
+}
 
 app.MapHub<GameHub>("/hub/game");
 
