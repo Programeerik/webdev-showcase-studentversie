@@ -53,7 +53,7 @@
         groupNameElement.innerHTML = groupName;
         createUserListElements(userIds);
         if (userIds.length >= 2) {
-            btnStartGame.setAttribute("style", "display:block;");
+            btnStartGame.classList.remove("hide-game-element");
         }
     });
 
@@ -62,14 +62,14 @@
         groupNameElement.innerHTML = groupName;
         createUserListElements(userIds);
         if (userIds.length >= 2) {
-            btnStartGame.setAttribute("style", "display:block;");
+            btnStartGame.classList.remove("hide-game-element");
         }
     });
 
     await connection.on("ShowUserList", (userIds) => {
         createUserListElements(userIds);
         if (userIds.length >= 2) {
-            btnStartGame.setAttribute("style", "display:block;");
+            btnStartGame.classList.remove("hide-game-element");
         }
     });
 
@@ -132,11 +132,11 @@
 
     async function createGameBoard(groupName,playerSymbol) {
         const board = document.querySelector("#GameBoard");
-        board.setAttribute("style", "display:grid;width: 150px;grid-template-columns: auto auto auto;gap: 5px 5px;");
+        //board.setAttribute("style", "display:grid;width: 150px;grid-template-columns: auto auto auto;gap: 5px 5px;");
         for (let i = 0; i < 9; i++) {
             let span = document.createElement("div");
             span.innerHTML = " ";
-            span.style = "border:solid;#333333;1px;width:50px;height:50px;";
+            //span.style = "border:solid;#333333;1px;width:50px;height:50px;";
             span.id = "cell" + i;
             span.onclick = async () => {
                 let cell = document.getElementById("cell" + i);
@@ -171,7 +171,6 @@
         const popup = document.createElement("div");
         popup.id = "GameEndPopUp";
         popup.innerHTML = message;
-        popup.style = "z-index: 10;width: 50%;position: absolute;top: 20%;left: 25%;background: #333333;opacity: 0.7;color: white;text-align: center;padding: 1rem;"
 
         const button = document.createElement("button");
         button.onclick = () => {

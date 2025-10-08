@@ -1,0 +1,33 @@
+﻿.hide-game-element {
+    display: none;
+}
+
+#GameBoard {
+    display: grid;
+    width: 150px;
+    grid-template-columns: auto auto auto;
+    gap: 5px 5px;
+}
+
+#GameBoard div {
+    border:solid #333333 1px;
+    width:50px;
+    height:50px;
+}
+
+#display-block {
+    display: block;
+}
+
+#GameEndPopUp {
+    z-index: 10;
+    width: 50%;
+    position: absolute;
+    top: 20%;
+    left: 25%;
+    background: #333333;
+    opacity: 0.7;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
