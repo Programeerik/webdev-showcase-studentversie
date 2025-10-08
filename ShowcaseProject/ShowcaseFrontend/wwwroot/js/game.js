@@ -132,11 +132,9 @@
 
     async function createGameBoard(groupName,playerSymbol) {
         const board = document.querySelector("#GameBoard");
-        //board.setAttribute("style", "display:grid;width: 150px;grid-template-columns: auto auto auto;gap: 5px 5px;");
         for (let i = 0; i < 9; i++) {
             let span = document.createElement("div");
             span.innerHTML = " ";
-            //span.style = "border:solid;#333333;1px;width:50px;height:50px;";
             span.id = "cell" + i;
             span.onclick = async () => {
                 let cell = document.getElementById("cell" + i);
