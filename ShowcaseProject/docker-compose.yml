@@ -33,6 +33,7 @@ services:
     build:
       context: .
       dockerfile: ShowcaseAPI/Dockerfile
+      target: "final"
     container_name: showcaseapi
     ports:
       - "5001:80"

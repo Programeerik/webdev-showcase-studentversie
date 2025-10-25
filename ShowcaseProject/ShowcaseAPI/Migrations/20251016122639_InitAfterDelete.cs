@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ShowcaseAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitAfterDelete : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

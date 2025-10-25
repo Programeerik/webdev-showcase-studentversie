@@ -3,6 +3,7 @@ WORKDIR /src
 
 COPY ["ShowcaseApiTesting/ShowcaseApiTesting.csproj", "ShowcaseApiTesting/"]
 COPY ["ShowcaseAPI/ShowcaseAPI.csproj", "ShowcaseAPI/"]
+RUN dotnet restore "ShowcaseAPI/ShowcaseAPI.csproj"
 RUN dotnet restore "ShowcaseApiTesting/ShowcaseApiTesting.csproj"
 
 COPY . .

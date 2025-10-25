@@ -11,9 +11,9 @@ using ShowcaseAPI.Data;
 
 namespace ShowcaseAPI.Migrations
 {
-    [DbContext(typeof(DataContext))]
-    [Migration("20250204165622_editLoginUserToAuthLoginUser")]
-    partial class editLoginUserToAuthLoginUser
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20251016122639_InitAfterDelete")]
+    partial class InitAfterDelete
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

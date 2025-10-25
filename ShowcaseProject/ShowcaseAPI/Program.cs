@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using ShowcaseAPI.Data;
 using ShowcaseAPI.Hubs;
 using System.Text;
+using Microsoft.AspNetCore.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,41 +36,38 @@ builder.Services.AddCors(options =>
 
 Env.Load();
 
-// Add services to the container.
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")!)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-    };
-});
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_URL")));
 
 builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DataContext>(options =>
-options.UseSqlServer(Environment.GetEnvironmentVariable("DATABASE_URL")));
+builder.Services
+    .AddIdentityCore<IdentityUser>(options =>
+    {
+        options.Password.RequiredLength = 12;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredUniqueChars = 0;
 
-builder.Services.AddAuthorization();
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+        options.Lockout.MaxFailedAccessAttempts = 5;
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+
+    })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<DataContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication()
+    .AddBearerToken(IdentityConstants.BearerScheme); 
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -79,7 +77,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<IdentityUser>();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -101,14 +98,18 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+app.MapIdentityApi<IdentityUser>();
+
 app.MapControllers();
+
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<DataContext>();
+        var context = services.GetRequiredService<ApplicationDbContext>();
         context.Database.Migrate();
     }
     catch (Exception ex)
@@ -130,4 +131,5 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
+
 app.Run();
