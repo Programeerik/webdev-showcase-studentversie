@@ -39,9 +39,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-}
-if (!app.Environment.IsDevelopment())
-{
+
     app.Use(async (context, next) =>
     {
         context.Response.Headers.Append("Content-Security-Policy",
@@ -74,7 +72,7 @@ else
             "frame-ancestors 'none'; " +
             "base-uri 'self'; " +
             "form-action 'self';" +
-            "connect-src 'self'  ws://localhost:* http://localhost:5001; ");
+            "connect-src 'self' https://cdnjs.cloudflare.com ws://localhost:* http://localhost:5001; ");
         await next();
     });
 }
@@ -98,3 +96,5 @@ app.MapControllerRoute(
 
 
 app.Run();
+Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+

@@ -24,6 +24,8 @@ services:
       - showcaseapi
     environment:
       - API_BASE_URL=http://showcaseapi
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_ENVIRONMENT=Development
     volumes:
       - ./ShowcaseFrontend:/app/ShowcaseFrontend
       - ~/.nuget/packages:/root/.nuget/packages:ro
@@ -44,6 +46,8 @@ services:
     environment:
       - SQLSERVER_HOST=sqlserver
       - SQLSERVER_PORT=1433
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_ENVIRONMENT=Development
 
   showcaseapitesting:
     build:
